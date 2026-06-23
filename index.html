@@ -99,7 +99,8 @@ img{max-width:100%;display:block}
 .btn-block{width:100%;justify-content:center}
 
 /* header */
-header{position:relative;z-index:60;background:rgba(13,16,20,.6);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header{position:sticky;top:0;z-index:60;background:rgba(13,16,20,.6);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);transition:background .3s,border-color .3s}
+header.scrolled{background:transparent;border-color:transparent}
 .nav{display:flex;align-items:center;justify-content:space-between;height:70px}
 .logo{font-family:'Unbounded';font-weight:700;font-size:1.1rem;letter-spacing:.02em}
 .logo b{color:var(--green)}
@@ -570,7 +571,7 @@ html.limecur *{cursor:none!important}
 <noscript><div><img src="https://mc.yandex.ru/watch/110063291" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
 <style>
-.bk{box-sizing:border-box;overflow:hidden;position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-12px);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s,background .25s,border-color .25s,box-shadow .25s,color .25s;width:34px;height:34px;border-radius:50%;background:rgba(20,25,32,.26);-webkit-backdrop-filter:blur(9px) saturate(1.15);backdrop-filter:blur(9px) saturate(1.15);border:1px solid rgba(255,255,255,.05);color:#6b727d;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 3px 10px -8px rgba(0,0,0,.45);z-index:90}
+.bk{box-sizing:border-box;overflow:hidden;position:fixed;top:78px;left:50%;transform:translateX(-50%) translateY(-12px);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s,background .25s,border-color .25s,box-shadow .25s,color .25s;width:34px;height:34px;border-radius:50%;background:rgba(20,25,32,.26);-webkit-backdrop-filter:blur(9px) saturate(1.15);backdrop-filter:blur(9px) saturate(1.15);border:1px solid rgba(255,255,255,.05);color:#6b727d;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 3px 10px -8px rgba(0,0,0,.45);z-index:90}
 .bk::before{content:"";position:absolute;inset:0;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 58%);pointer-events:none}
 .bk.show{opacity:.85;transform:translateX(-50%) translateY(0);pointer-events:auto}
 .bk:hover{opacity:1;background:rgba(28,35,45,.42);border-color:rgba(255,255,255,.12);color:#9aa2ad;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 5px 14px -8px rgba(0,0,0,.5)}
@@ -592,7 +593,7 @@ html.limecur *{cursor:none!important}
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-cta">
-      <a href="#zayavka" class="btn btn-green nav-btn">Связаться</a>
+      <a href="#zayavka" class="btn btn-green nav-btn nav-contact">Связаться</a>
       <button class="burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -1261,6 +1262,9 @@ leadForm.addEventListener('submit',e=>{
   var cb=document.getElementById('pcCalcBtn'), rng=document.getElementById('pcRange'), pp=document.getElementById('pcP');
   if(cb&&rng&&pp){ cb.addEventListener('click',function(){ setTask('Тариф: Маркировка под ключ — '+rng.value+' креативов/мес (≈ '+pp.textContent+' ₽/мес)'); }); }
 })();
+</script>
+<script>
+(function(){var h=document.querySelector('header');if(!h)return;function u(){h.classList.toggle('scrolled',(window.scrollY||document.documentElement.scrollTop||0)>8);}window.addEventListener('scroll',u,{passive:true});u();})();
 </script>
 </body>
 </html>
