@@ -1056,15 +1056,18 @@ renderRisks('agency');
 const leadForm=document.getElementById('leadForm'),fmsg=document.getElementById('fmsg'),leadBtn=document.getElementById('leadBtn');
 leadForm.addEventListener('submit',e=>{
   e.preventDefault();
+  const userTask=document.getElementById('fTask').value.trim();
+  const svc=window.selectedTariff||'';
   const data={
     contact:document.getElementById('fContact').value.trim(),
-    task:document.getElementById('fTask').value.trim(),
+    task: svc ? (userTask ? userTask+'\n\n'+svc : svc) : userTask,
+    service: svc,
     botcheck:leadForm.querySelector('[name=botcheck]').checked
   };
   // Мгновенная обратная связь: показываем успех сразу
   fmsg.className='fmsg ok';fmsg.textContent='Заявка отправлена! Свяжемся в течение 30 минут.';
   leadBtn.textContent='Отправлено ✓';leadBtn.disabled=true;
-  leadForm.reset();
+  leadForm.reset(); window.selectedTariff='';
   if(window.ym)ym(110063291,'reachGoal','lead');
   setTimeout(()=>{leadBtn.textContent='Отправить заявку';leadBtn.disabled=false;},4000);
   // Отправка в Telegram в фоне (не блокирует интерфейс)
@@ -1255,12 +1258,12 @@ leadForm.addEventListener('submit',e=>{
 </script>
 <script>
 (function(){
-  function setTask(v){ var el=document.getElementById('fTask'); if(el) el.value=v; }
+  function setSvc(v){ window.selectedTariff=v; }
   document.querySelectorAll('a[data-svc]').forEach(function(a){
-    a.addEventListener('click',function(){ setTask('Тариф: '+a.getAttribute('data-svc')); });
+    a.addEventListener('click',function(){ setSvc('Тариф: '+a.getAttribute('data-svc')); });
   });
   var cb=document.getElementById('pcCalcBtn'), rng=document.getElementById('pcRange'), pp=document.getElementById('pcP');
-  if(cb&&rng&&pp){ cb.addEventListener('click',function(){ setTask('Тариф: Маркировка под ключ — '+rng.value+' креативов/мес (≈ '+pp.textContent+' ₽/мес)'); }); }
+  if(cb&&rng&&pp){ cb.addEventListener('click',function(){ setSvc('Тариф: Маркировка под ключ — '+rng.value+' креативов/мес (≈ '+pp.textContent+' ₽/мес)'); }); }
 })();
 </script>
 <script>
