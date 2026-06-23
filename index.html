@@ -550,6 +550,12 @@ html.limecur *{cursor:none!important}
 .pcalc-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--green);border:3px solid #0d1014;box-shadow:0 0 0 1px var(--green),0 4px 10px -2px rgba(90,167,17,.7);cursor:pointer}
 .pcalc-range::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--green);border:3px solid #0d1014;box-shadow:0 0 0 1px var(--green);cursor:pointer}
 .pcalc-note{font-size:.78rem;color:var(--muted);margin-top:11px;line-height:1.45}
+.price-note{display:none;font-size:.76rem;color:var(--muted-2);margin:4px 0 2px;line-height:1.4}
+.price-note.show{display:block}
+.pcalc-benefit{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:.88rem;font-weight:600;color:var(--green);margin:9px 0 2px;min-height:1.4em;opacity:0;transform:translateY(-2px);transition:opacity .3s,transform .3s}
+.pcalc-benefit.show{opacity:1;transform:none}
+.pcalc-benefit b{font-weight:700}
+.pcalc-benefit .save{flex:none;font-weight:700;font-size:.78rem;background:var(--green-tint);border:1px solid rgba(111,191,31,.32);border-radius:999px;padding:1px 9px}
 </style>
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
@@ -759,7 +765,7 @@ html.limecur *{cursor:none!important}
           <li>Ответы со ссылками на нормы и практику</li>
           <li>Поддержка в течение 7 дней после</li>
         </ul>
-        <a href="#zayavka" class="btn btn-outline btn-block">Оставить заявку</a>
+        <a href="#zayavka" class="btn btn-outline btn-block" data-svc="Консультация">Оставить заявку</a>
       </div>
       <div class="price-card reveal">
         <h3>Обучение работе с ОРД</h3>
@@ -772,25 +778,27 @@ html.limecur *{cursor:none!important}
           <li>Анализ договоров с контрагентами (по запросу)</li>
           <li>Шаблоны документов в подарок + поддержка 7 дней</li>
         </ul>
-        <a href="#zayavka" class="btn btn-outline btn-block">Оставить заявку</a>
+        <a href="#zayavka" class="btn btn-outline btn-block" data-svc="Обучение работе с ОРД">Оставить заявку</a>
       </div>
       <div class="price-card featured reveal">
         <h3>Маркировка под ключ</h3>
         <div class="sub">Полный аутсорс и ответственность на нашей стороне</div>
         <div class="price">≈ <span id="pcP">39 900</span> ₽ <small>/ мес</small></div>
+        <div class="pcalc-benefit" id="pcBen"><span>креативы свыше <b id="pcTh">25</b> — <b id="pcRate">750</b> ₽/шт</span><span class="save" id="pcSave">−<b id="pcPct">0</b>%</span></div>
+        <div class="price-note" id="pcPriceNote">Точную сумму утвердим на консультации.</div>
         <div class="pcalc">
           <div class="pcalc-row"><span>Креативов в месяц</span><span class="pcalc-v" id="pcN">25</span></div>
-          <input type="range" class="pcalc-range" id="pcRange" min="0" max="200" value="25" step="5" aria-label="Креативов в месяц">
-          <div class="pcalc-note">Включено 25 креативов. Точную сумму рассчитаем на консультации.</div>
+          <input type="range" class="pcalc-range" id="pcRange" min="25" max="200" value="25" step="5" aria-label="Креативов в месяц">
+          <div class="pcalc-note" id="pcNote">В пакет включено 25 креативов.</div>
         </div>
         <ul>
-          <li>Регистрация и ведение личного кабинета ОРД</li>
           <li>Маркировка и передача данных в реестр</li>
           <li>Ведение учёта креативов и документов</li>
           <li>Сбор статистики и контроль сроков</li>
+          <li>Контроль расчёта 3% в ЕРИР</li>
           <li>Full-time сопровождение</li>
         </ul>
-        <a href="#zayavka" class="btn btn-green btn-block">Рассчитать стоимость</a>
+        <a href="#zayavka" class="btn btn-green btn-block" id="pcCalcBtn">Рассчитать стоимость</a>
       </div>
     </div>
     <p class="price-disc">Тарифы носят ознакомительный характер и не являются публичной офертой.</p>
@@ -1059,8 +1067,7 @@ leadForm.addEventListener('submit',e=>{
   if(window.ym)ym(110063291,'reachGoal','lead');
   setTimeout(()=>{leadBtn.textContent='Отправить заявку';leadBtn.disabled=false;},4000);
   // Отправка в Telegram в фоне (не блокирует интерфейс)
-  fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),keepalive:true})
-    .then(r=>r.json()).then(j=>{if(!j||!j.success){fmsg.className='fmsg err';fmsg.textContent='Заявка принята, но возможна задержка. Если не свяжемся — напишите в Telegram или WhatsApp.';}})
+  fetch('https://script.google.com/macros/s/AKfycbyMV7ycJwLIsX4FQ0b3WT-vVkHzxkL0ClioPpNX9Ei37l589lp5ggwIGJikua9c9UiJDQ/exec',{method:'POST',body:JSON.stringify(data),keepalive:true,mode:'no-cors'})
     .catch(()=>{fmsg.className='fmsg err';fmsg.textContent='Заявка принята, но возможна задержка. Если не свяжемся — напишите в Telegram или WhatsApp.';});
 });
 </script>
@@ -1184,16 +1191,26 @@ leadForm.addEventListener('submit',e=>{
 <script>
 (function(){
   var r=document.getElementById('pcRange'); if(!r) return;
-  var pN=document.getElementById('pcN'), pP=document.getElementById('pcP');
-  var BASE=39900, INCL=25; /* база 39 900 за 25 креатив */
+  var pN=document.getElementById('pcN'), pP=document.getElementById('pcP'),
+      ben=document.getElementById('pcBen'), pTh=document.getElementById('pcTh'),
+      pRate=document.getElementById('pcRate'), pSave=document.getElementById('pcSave'),
+      pPct=document.getElementById('pcPct'), pNote=document.getElementById('pcNote'), pPriceNote=document.getElementById('pcPriceNote');
+  var BASE=39900;
   function calc(v){ var p=BASE;
-    if(v>25)  p+=(Math.min(v,50)-25)*750;    /* 26–50  → 750 ₽ */
-    if(v>50)  p+=(Math.min(v,100)-50)*600;   /* 51–100 → 600 ₽ */
-    if(v>100) p+=(v-100)*500;                /* >100   → 500 ₽ */
+    if(v>25)  p+=(Math.min(v,50)-25)*750;
+    if(v>50)  p+=(Math.min(v,100)-50)*600;
+    if(v>100) p+=(v-100)*500;
     return Math.round(p/100)*100; }
+  function tier(v){ if(v<=50) return {th:25,rate:750}; if(v<=100) return {th:50,rate:600}; return {th:100,rate:500}; }
   function upd(){ var v=+r.value;
     pN.textContent=v;
     pP.textContent=calc(v).toLocaleString('ru-RU');
+    if(v>25){ var t=tier(v), pct=Math.round((1-t.rate/750)*100);
+      pTh.textContent=t.th; pRate.textContent=t.rate.toLocaleString('ru-RU');
+      pSave.style.display = pct>0 ? 'inline-flex' : 'none'; pPct.textContent=pct;
+      ben.classList.add('show'); if(pPriceNote) pPriceNote.classList.add('show');
+      pNote.textContent='Сверх пакета: +'+(v-25)+' креативов.';
+    } else { ben.classList.remove('show'); if(pPriceNote) pPriceNote.classList.remove('show'); pNote.textContent='В пакет включено 25 креативов.'; }
     r.style.setProperty('--pct', ((v-r.min)/(r.max-r.min)*100)+'%'); }
   r.addEventListener('input', upd); upd();
 })();
@@ -1233,6 +1250,16 @@ leadForm.addEventListener('submit',e=>{
   bk.addEventListener('click',go);
   bk.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
   upd();
+})();
+</script>
+<script>
+(function(){
+  function setTask(v){ var el=document.getElementById('fTask'); if(el) el.value=v; }
+  document.querySelectorAll('a[data-svc]').forEach(function(a){
+    a.addEventListener('click',function(){ setTask('Тариф: '+a.getAttribute('data-svc')); });
+  });
+  var cb=document.getElementById('pcCalcBtn'), rng=document.getElementById('pcRange'), pp=document.getElementById('pcP');
+  if(cb&&rng&&pp){ cb.addEventListener('click',function(){ setTask('Тариф: Маркировка под ключ — '+rng.value+' креативов/мес (≈ '+pp.textContent+' ₽/мес)'); }); }
 })();
 </script>
 </body>
