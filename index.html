@@ -563,6 +563,14 @@ html.limecur *{cursor:none!important}
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/110063291" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
+<style>
+.bk{box-sizing:border-box;overflow:hidden;position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-12px);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s,background .25s,border-color .25s,box-shadow .25s,color .25s;width:34px;height:34px;border-radius:50%;background:rgba(20,25,32,.26);-webkit-backdrop-filter:blur(9px) saturate(1.15);backdrop-filter:blur(9px) saturate(1.15);border:1px solid rgba(255,255,255,.05);color:#6b727d;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 3px 10px -8px rgba(0,0,0,.45);z-index:90}
+.bk::before{content:"";position:absolute;inset:0;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 58%);pointer-events:none}
+.bk.show{opacity:.85;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.bk:hover{opacity:1;background:rgba(28,35,45,.42);border-color:rgba(255,255,255,.12);color:#9aa2ad;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 5px 14px -8px rgba(0,0,0,.5)}
+.bk svg{position:relative;z-index:1;width:15px;height:15px}
+@media (prefers-reduced-motion:reduce){.bk{transition:opacity .2s}}
+</style>
 </head>
 <body>
 
@@ -1051,7 +1059,9 @@ leadForm.addEventListener('submit',e=>{
   if(window.ym)ym(110063291,'reachGoal','lead');
   setTimeout(()=>{leadBtn.textContent='Отправить заявку';leadBtn.disabled=false;},4000);
   // Отправка в Telegram в фоне (не блокирует интерфейс)
-  fetch('https://script.google.com/macros/s/AKfycbyMV7ycJwLIsX4FQ0b3WT-vVkHzxkL0ClioPpNX9Ei37l589lp5ggwIGJikua9c9UiJDQ/exec',{method:'POST',body:JSON.stringify(data),keepalive:true,mode:'no-cors'}).catch(function(){});
+  fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),keepalive:true})
+    .then(r=>r.json()).then(j=>{if(!j||!j.success){fmsg.className='fmsg err';fmsg.textContent='Заявка принята, но возможна задержка. Если не свяжемся — напишите в Telegram или WhatsApp.';}})
+    .catch(()=>{fmsg.className='fmsg err';fmsg.textContent='Заявка принята, но возможна задержка. Если не свяжемся — напишите в Telegram или WhatsApp.';});
 });
 </script>
 
@@ -1209,6 +1219,20 @@ leadForm.addEventListener('submit',e=>{
     o.observe(el); }
   once('tarify','scroll_tarify');
   once('zayavka','scroll_form');
+})();
+</script>
+<div class="bk" id="bk" role="button" tabindex="0" aria-label="К тарифам" title="К тарифам"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+<script>
+(function(){
+  var bk=document.getElementById('bk'),t=document.getElementById('tarify');
+  if(!bk||!t)return;
+  function upd(){bk.classList.toggle('show',t.getBoundingClientRect().bottom<=8);}
+  function go(){var y=t.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop||0)-8;try{window.scrollTo({top:y,behavior:'smooth'});}catch(e){window.scrollTo(0,y);}}
+  window.addEventListener('scroll',upd,{passive:true});
+  window.addEventListener('resize',upd);
+  bk.addEventListener('click',go);
+  bk.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+  upd();
 })();
 </script>
 </body>
